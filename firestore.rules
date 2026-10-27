@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ▼▼ 여기를 내 이메일로 바꾸세요 (firebase-config.js 의 OWNER_EMAIL 과 같게) ▼▼
+    function owner() {
+      return request.auth != null && request.auth.token.email == 'juju@luv.com';
+    }
+
+    // 관리자만 쓰기 / 모두 읽기
+    match /todos/{id}  { allow read: if true; allow write: if owner(); }
+    match /posts/{id}  { allow read: if true; allow write: if owner(); }
+    match /meta/{id}   { allow read: if true; allow write: if owner(); }
+
+    // 채팅: 누구나 작성 (이름 12자 / 내용 200자 이하, "민주" 이름은 관리자만), 삭제는 관리자만
+    match /chats/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['name', 'msg', 'owner', 'ts'])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 12
+        && request.resource.data.msg is string && request.resource.data.msg.size() > 0 && request.resource.data.msg.size() <= 200
+        && request.resource.data.owner == owner()
+        && request.resource.data.ts == request.time
+        && (owner() || request.resource.data.name != '민주');
+      allow delete: if owner();
+    }
+
+    // 사진 댓글: 채팅과 같은 규칙
+    match /comments/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['post', 'name', 'text', 'ts'])
+        && request.resource.data.post is string && request.resource.data.post.size() < 40
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 12
+        && request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 200
+        && request.resource.data.ts == request.time
+        && (owner() || request.resource.data.name != '민주');
+      allow delete: if owner();
+    }
+  }
+}
