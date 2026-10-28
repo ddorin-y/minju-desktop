@@ -711,7 +711,7 @@ body:not(.admin-on) .arrange{display:none}
   </div>
 
   <nav class="icons" aria-label="폴더">
-    <button class="icon" data-open="photos" aria-pressed="false"><svg><use href="#icCam"/></svg><span>사진첩</span></button>
+    <button class="icon" data-open="photos" aria-pressed="false"><svg><use href="#icCam"/></svg><span>앨범</span></button>
     <button class="icon" data-open="diary" aria-pressed="false"><svg><use href="#icBook"/></svg><span>다이어리</span></button>
     <button class="icon" data-open="music" aria-pressed="false"><svg><use href="#icVinyl"/></svg><span>뮤직</span></button>
     <button class="icon" data-open="chat" aria-pressed="false"><svg><use href="#icTalk"/></svg><span>채팅</span></button>
@@ -721,7 +721,7 @@ body:not(.admin-on) .arrange{display:none}
   </nav>
 
   <section class="win" id="photos" hidden aria-labelledby="t-photos">
-    <div class="bar"><button class="close" aria-label="사진첩 닫기"></button><h2 id="t-photos">사진첩</h2></div>
+    <div class="bar"><button class="close" aria-label="앨범 닫기"></button><h2 id="t-photos">앨범</h2></div>
     <div class="body">
       <form class="up" id="upForm" hidden><input id="upTitle" maxlength="30" placeholder="제목" aria-label="제목" required><textarea id="upBody" maxlength="500" placeholder="내용" aria-label="내용"></textarea><input id="upFile" type="file" accept="image/*" aria-label="사진"><button type="submit">새 글 올리기</button></form>
       <div class="photos" id="photoGrid"></div>
@@ -907,7 +907,7 @@ body:not(.admin-on) .arrange{display:none}
     POSTS.forEach(p=>{
       const b=document.createElement('button');b.type='button';b.className='photo';
       b.innerHTML=`<div>${imgHtml(p)}</div>`;
-      const sm=document.createElement('small');sm.textContent=`${p.date.slice(6).replace(' ','')} ${p.title}`;b.append(sm);
+      const sm=document.createElement('small');sm.textContent=p.title;b.append(sm);
       b.addEventListener('click',()=>{
         $('postImg').innerHTML=imgHtml(p);$('postTitle').textContent=p.title;$('postDate').textContent=p.date;$('postBody').textContent=p.body;
         curPost=p.id;$('postDel').hidden=!isAdmin();renderCmts();grid.hidden=true;post.hidden=false;
